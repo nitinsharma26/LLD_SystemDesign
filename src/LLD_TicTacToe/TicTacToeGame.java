@@ -5,17 +5,27 @@ import java.util.*;
 public class TicTacToeGame {
 
     private static TicTacToeGame ticTacToeGame = null;
+    private WinningStrategy winningStrategy;  // Strategy for checking win condition
     Deque<Player> players;
     Board gameBoard;
-    int[] row;
-    int[] col;
-    int diglr=0;
-    int digrl=0;
+    Integer[] row;
+    Integer[] col;
+    Integer diglr=0;
+    Integer digrl=0;
 
 
 
-    public TicTacToeGame() {
+    // Singleton Pattern: Private constructor
+    private TicTacToeGame() {
         initializeGame();
+    }
+
+    // Singleton Pattern: Static method to get the instance
+    public static TicTacToeGame getInstance() {
+        if (ticTacToeGame == null) {
+            ticTacToeGame = new TicTacToeGame();
+        }
+        return ticTacToeGame;
     }
 
     public void initializeGame() {
@@ -26,16 +36,14 @@ public class TicTacToeGame {
             String[] values = s.split(" ");
             String symbol = (values[0]);
             String name = (values[1]);
-            if(symbol.equals("X"))
-                players.add(new Player(name,PlayerPieice.X));
-            else
-                players.add(new Player(name,PlayerPieice.O));
+            players.add(PlayerFactory.createPlayer(name, symbol));  // Using Factory to create Players
         }
         gameBoard = new Board(3);
-        row = new int[3];
-        col = new int[3];
+        row = new Integer[3];
+        col = new Integer[3];
         Arrays.fill(row,0);
         Arrays.fill(col,0);
+        winningStrategy = new DefaultWinningStrategy();  // Strategy Pattern
     }
 
     public void startGame(){
@@ -43,8 +51,8 @@ public class TicTacToeGame {
         while(noWinner){
             Player playerTurn = players.removeFirst();
             gameBoard.printBoard();
-            int inputRow;
-            int inputColumn;
+            Integer inputRow;
+            Integer inputColumn;
             while(true){
                 Scanner inputScanner = new Scanner(System.in);
                 String s = inputScanner.nextLine();
@@ -70,7 +78,7 @@ public class TicTacToeGame {
                 }
             }
             players.addLast(playerTurn);
-            boolean winner = iswinner(inputRow, inputColumn, playerTurn.getPlayerPiece());
+            boolean winner =  winningStrategy.checkWin(inputRow, inputColumn, playerTurn.getPlayerPiece(), row, col, diglr, digrl);
             if(winner) {
                 gameBoard.printBoard();
                 System.out.println(playerTurn.getName()+ " won the game");
