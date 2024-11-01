@@ -8,10 +8,14 @@ public class TicTacToeGame {
     private WinningStrategy winningStrategy;  // Strategy for checking win condition
     Deque<Player> players;
     Board gameBoard;
-    Integer[] row;
-    Integer[] col;
-    Integer diglr=0;
-    Integer digrl=0;
+    int[] row;
+    int[] col;
+    int[] diagonals = new int[2];
+
+
+
+    //diagonal[0] for LR
+    //diagonal[1] for RL
 
 
 
@@ -39,16 +43,16 @@ public class TicTacToeGame {
             players.add(PlayerFactory.createPlayer(name, symbol));  // Using Factory to create Players
         }
         gameBoard = new Board(3);
-        row = new Integer[3];
-        col = new Integer[3];
+        row = new int[3];
+        col = new int[3];
         Arrays.fill(row,0);
         Arrays.fill(col,0);
         winningStrategy = new DefaultWinningStrategy();  // Strategy Pattern
     }
 
     public void startGame(){
-        boolean noWinner = true;
-        while(noWinner){
+        int move = 0;
+        while(move < 9){
             Player playerTurn = players.removeFirst();
             gameBoard.printBoard();
             Integer inputRow;
@@ -74,38 +78,21 @@ public class TicTacToeGame {
                 if(!pieceAddedSuccessfully) {
                     System.out.println("Invalid Move");
                 }else{
+                    move++;
                     break;
                 }
             }
             players.addLast(playerTurn);
-            boolean winner =  winningStrategy.checkWin(inputRow, inputColumn, playerTurn.getPlayerPiece(), row, col, diglr, digrl);
+            boolean winner = false;
+            winner = winningStrategy.checkWin(inputRow, inputColumn, playerTurn.getPlayerPiece(), row, col, diagonals);
+            System.out.println(winner);
             if(winner) {
                 gameBoard.printBoard();
                 System.out.println(playerTurn.getName()+ " won the game");
-                noWinner = false;
-                break;
+                return;
             }
         }
-        if(!noWinner) return;
+        gameBoard.printBoard();
         System.out.println("Game Over");
-    }
-
-    private boolean iswinner(int x, int y, PlayerPieice symbol){
-        if(symbol==PlayerPieice.O){
-            row[x]+=1;
-            col[y]+=1;
-            if(x==y) diglr+=1;
-            if(x+y==2) digrl+=1;
-            if(row[x]==3 || col[y]==3 ||diglr==3 || digrl==3)
-                return true;
-        }else{
-            row[x]-=1;
-            col[y]-=1;
-            if(x==y) diglr-=1;
-            if(x+y==2) digrl-=1;
-            if(row[x]==-3 || col[y]==-3 ||diglr==-3 || digrl==-3)
-                return true;
-        }
-        return false;
     }
 }
