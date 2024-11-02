@@ -1,6 +1,8 @@
 package LLD_SnakeAndLadder;
 
-import java.sql.SQLOutput;
+import LLD_SnakeAndLadder.dice.DiceStrategy;
+import LLD_SnakeAndLadder.dice.SixSidedDice;
+
 import java.util.*;
 
 public class SnakeAndLadder {
@@ -9,7 +11,7 @@ public class SnakeAndLadder {
 
     private Deque<Player> playerList;
 
-    Dice dice;
+    DiceStrategy dice;
 
     private SnakeAndLadder(){
 
@@ -24,7 +26,7 @@ public class SnakeAndLadder {
     public void init(){
         int snake;
         Scanner sc = new Scanner(System.in);
-        dice = new Dice();
+        dice = new SixSidedDice();
         snake = sc.nextInt();
 
         while(snake>0){
@@ -50,10 +52,11 @@ public class SnakeAndLadder {
         int numPlayer;
         numPlayer = sc.nextInt();
         sc.nextLine();
-        playerList = new LinkedList();
+        playerList = new LinkedList<>();
         while(numPlayer>0){
             String name = sc.nextLine();
-            playerList.add(new Player(name,0));
+            Player player = new Player(name);
+            playerList.add(player);
             numPlayer--;
         }
     }
@@ -61,7 +64,7 @@ public class SnakeAndLadder {
     public void start() {
         while(true){
             Player currentPlayer = playerList.removeFirst();
-            int rollnumber = dice.rolledDice();
+            int rollnumber = dice.rollDice();
             int curPos = currentPlayer.pos + rollnumber > 100 ? currentPlayer.pos : currentPlayer.pos + rollnumber;
             if(jump.containsKey(curPos)){
                 curPos = jump.get(curPos);
