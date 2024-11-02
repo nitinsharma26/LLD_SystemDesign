@@ -2,6 +2,8 @@ package LLD_SnakeAndLadder;
 
 public class Main {
     public static void main(String[] args) {
-        //start the logic
+        SnakeAndLadder game = SnakeAndLadder.getInstance();
+        game.init();
+        game.start();
     }
 }
