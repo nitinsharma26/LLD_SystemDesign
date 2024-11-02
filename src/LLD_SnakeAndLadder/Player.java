@@ -4,9 +4,9 @@ public class Player {
     private String name;
     int pos;
 
-    public Player(String name,int pos) {
+    public Player(String name) {
         this.name = name;
-        this.pos = pos;
+        this.pos = 0;
     }
 
     public int getPos() {
