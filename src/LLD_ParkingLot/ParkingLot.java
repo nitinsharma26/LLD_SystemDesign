@@ -18,7 +18,7 @@ public class ParkingLot {
 
     Vehicle vehicle;
 
-    //ticketId, Floor_Slot
+    //ticketId, floor_slot_type_regs_color
     HashMap<String, String> log;
 
     PriorityQueue<String> carAvailability = new PriorityQueue<>((a, b) -> {
@@ -163,9 +163,14 @@ public class ParkingLot {
             String temp = log.get(s);
             String[] s1 = temp.split("_");
             System.out.println("Unparked vehicle with Registration Number: "+ s1[3] +" and Color: "+ s1[4]);
+
             log.remove(s);
-            if(s1[2].equals(Type.CAR)){
-                String tt = s1[0]+s1[1];
+
+            if(s1[2].equals("CAR")){
+                String tt = s1[0];
+                tt+="_";
+                tt+=s1[1];
+
                 carAvailability.add(tt);
                 int floor = Integer.parseInt(s1[0]);
                 ArrayList<Integer> vec = carAvailableSlot.get(floor);
@@ -187,24 +192,33 @@ public class ParkingLot {
             //floor_slot -> string
             if(carAvailability.isEmpty()){
                 System.out.println("Parking Lot Full");
-            }else{
+            }else {
                 String top = carAvailability.poll();
-                top+="_";
-                top+=type;
-                top+="_";
-                top+=regi_no;
-                top+="_";
-                top+=color;
+                top += "_";
+                top += type;
+                top += "_";
+                top += regi_no;
+                top += "_";
+                top += color;
                 String[] s = top.split("_");
+                System.out.println(top);
                 int floor = Integer.parseInt(s[0]);
                 int slot = Integer.parseInt(s[1]);
-                ticketId+=s[0];
-                ticketId+="_";
-                ticketId+=s[1];
+                ticketId += s[0];
+                ticketId += "_";
+                ticketId += s[1];
                 ArrayList<Integer> temp = carAvailableSlot.get(floor);
-                temp.remove(slot);
+                int index = 0;
+                for (int i = 0; i < temp.size(); i++){
+                    if (temp.get(i) == slot) {
+                        index = i;
+                        break;
+                    }
+                }
+                temp.remove(index);
                 carAvailableSlot.put(floor,temp);
                 log.put(ticketId,top);
+                System.out.println("Parked vehicle. Ticket ID: "+ parkingID +"_"+floor+"_"+slot);
             }
         }else if(type.equals(Type.BIKE)){
             if(bikeAvailability.isEmpty()){
